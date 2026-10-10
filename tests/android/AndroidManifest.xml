@@ -1,0 +1,1 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.quicknotes.app.tests"><uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35"/><application android:label="QuickNotes Native Tests"/><instrumentation android:name="com.quicknotes.app.NativeTests" android:targetPackage="com.quicknotes.app" android:functionalTest="true"/></manifest>

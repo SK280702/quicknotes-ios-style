@@ -1,0 +1,12 @@
+package com.quicknotes.app;
+import android.app.*;import android.content.*;import android.graphics.Color;import android.os.*;import android.view.*;import android.widget.*;import org.json.*;
+public class AlarmActivity extends Activity {
+ String id;BroadcastReceiver changed=new BroadcastReceiver(){public void onReceive(Context c,Intent i){if(AlarmService.current==null||!AlarmService.current.ringing.containsKey(id))finish();else draw();}};
+ public void onCreate(Bundle b){super.onCreate(b);if(Build.VERSION.SDK_INT>=27){setShowWhenLocked(true);setTurnScreenOn(true);}else getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);id=getIntent().getStringExtra("id");IntentFilter f=new IntentFilter(getPackageName()+".ALARM_CHANGED");if(Build.VERSION.SDK_INT>=33)registerReceiver(changed,f,Context.RECEIVER_NOT_EXPORTED);else registerReceiver(changed,f);draw();}
+ protected void onNewIntent(Intent i){super.onNewIntent(i);setIntent(i);id=i.getStringExtra("id");draw();}
+ protected void onResume(){super.onResume();if(AlarmService.current==null||!AlarmService.current.ringing.containsKey(id))finish();}
+ void draw(){try{JSONObject item;synchronized(MainActivity.STORE_LOCK){item=Reminders.find(Reminders.read(this),id);}LinearLayout panel=new LinearLayout(this);panel.setOrientation(LinearLayout.VERTICAL);panel.setGravity(Gravity.CENTER);panel.setPadding(32,32,32,32);panel.setBackgroundColor(Color.rgb(28,28,30));TextView label=new TextView(this);label.setText("Urgent Reminder");label.setTextSize(18);label.setTextColor(Color.LTGRAY);panel.addView(label);TextView title=new TextView(this);title.setText(item==null?"Reminder":item.optString("title"));title.setTextSize(32);title.setGravity(Gravity.CENTER);title.setTextColor(Color.WHITE);title.setPadding(0,28,0,32);panel.addView(title);button(panel,"Snooze 5 minutes",()->send("SNOOZE"));button(panel,"Dismiss",()->send("STOP"));setContentView(panel);}catch(Exception e){finish();}}
+ void button(LinearLayout panel,String title,Runnable action){Button b=new Button(this);b.setText(title);b.setTextSize(20);b.setOnClickListener(v->action.run());LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,72);p.setMargins(0,10,0,10);panel.addView(b,p);}
+ void send(String action){startService(AlarmService.command(this,action,id));finish();}
+ protected void onDestroy(){try{unregisterReceiver(changed);}catch(Exception ignored){}super.onDestroy();}
+}

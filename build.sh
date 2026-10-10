@@ -17,5 +17,5 @@ java com.sun.tools.javac.Main -source 8 -target 8 -bootclasspath "$JAR:$BT/core-
 "$BT/d8" --lib "$JAR" --min-api 26 --output build/dex build/classes/com/quicknotes/app/*.class
 (cd build/dex && zip -q -u ../unsigned.apk classes.dex)
 "$BT/zipalign" -f -p 4 build/unsigned.apk build/aligned.apk
-"$BT/apksigner" sign --ks "$KEY" --ks-pass "pass:$PASS" --out dist/QuickNotes-v1.0.0.apk build/aligned.apk
-"$BT/apksigner" verify --verbose dist/QuickNotes-v1.0.0.apk
+"$BT/apksigner" sign --ks "$KEY" --ks-pass "pass:$PASS" --out dist/QuickNotes-v1.1.0.apk build/aligned.apk
+"$BT/apksigner" verify --verbose dist/QuickNotes-v1.1.0.apk

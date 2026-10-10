@@ -14,7 +14,7 @@ public class Reminders extends BroadcastReceiver {
   AlarmManager am=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);JSONArray items=d.getJSONArray("items");SharedPreferences prefs=c.getSharedPreferences(PREFS,0);long now=System.currentTimeMillis();
   for(int n=0;n<items.length();n++){JSONObject i=items.getJSONObject(n);String id=i.getString("id");long due=scheduledDue(i);PendingIntent pi=alarm(c,id,due);am.cancel(pi);
    boolean active=!i.optBoolean("deleted")&&activeList(d,i.optString("list"));long snooze=prefs.getLong("snooze:"+id,0);long snoozeDue=prefs.getLong("snooze-due:"+id,0);if(snooze>now&&snoozeDue==due&&active&&!i.optBoolean("done"))due=snooze;else if(snooze>0)prefs.edit().remove("snooze:"+id).remove("snooze-due:"+id).apply();
-   if(active&&due>now){if(i.optBoolean("urgent")&&i.optBoolean("timeEnabled",true)){if(exactAllowed(c)){PendingIntent show=PendingIntent.getActivity(c,0,new Intent(c,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);am.setAlarmClock(new AlarmManager.AlarmClockInfo(due,show),pi);}}else am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,due,pi);}
+   if(active&&due>now){if(i.optBoolean("urgent")&&i.optBoolean("timeEnabled",true)){if(exactAllowed(c)&&((NotificationManager)c.getSystemService(Context.NOTIFICATION_SERVICE)).areNotificationsEnabled()){PendingIntent show=PendingIntent.getActivity(c,0,new Intent(c,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);am.setAlarmClock(new AlarmManager.AlarmClockInfo(due,show),pi);}}else am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,due,pi);}
   }
   AlarmService.reconcile(c,d);
  }

@@ -8,7 +8,7 @@ public class NativeTests extends Instrumentation {
  JSONObject data(long due)throws Exception{return new JSONObject("{\"version\":1,\"lists\":[{\"id\":\"default\",\"title\":\"Test\",\"updated\":1}],\"items\":[]}").put("items",new JSONArray().put(new JSONObject().put("id","native-alarm-test").put("title","Native alarm verification").put("list","default").put("updated",System.currentTimeMillis()).put("due",due).put("timeEnabled",true).put("urgent",true)));}
  void store(JSONObject d)throws Exception{synchronized(MainActivity.STORE_LOCK){Reminders.write(context,d);Reminders.schedule(context,d);}}
  boolean ringing(){return AlarmService.current!=null&&AlarmService.current.player!=null&&AlarmService.current.player.isPlaying();}
- void awaitRing(boolean expected,long wait)throws Exception{long end=System.currentTimeMillis()+wait;while(System.currentTimeMillis()<end){if(ringing()==expected)return;Thread.sleep(100);}check(ringing()==expected,"Unexpected alarm audio state, expected "+expected);}
+ void awaitRing(boolean expected,long wait)throws Exception{long end=System.currentTimeMillis()+wait;while(System.currentTimeMillis()<end){if(ringing()==expected)return;Thread.sleep(100);}check(ringing()==expected,"Unexpected alarm audio state, expected "+expected+", service="+AlarmService.current);}
  void confirmDeletion()throws Exception{
   CountDownLatch complete=new CountDownLatch(1);AtomicReference<String> result=new AtomicReference<>();AtomicReference<AlertDialog> dialog=new AtomicReference<>();
   runOnMainSync(()->activity.web.evaluateJavascript("confirm('Delete native test reminder?')",s->{result.set(s);complete.countDown();}));
@@ -18,6 +18,7 @@ public class NativeTests extends Instrumentation {
  @Override public void onStart(){Bundle result=new Bundle();try{context=getTargetContext();activity=(MainActivity)startActivitySync(new Intent(context,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Thread.sleep(1500);confirmDeletion();
   check(Reminders.exactAllowed(context),"Exact alarm permission is not granted");
   // Exact alarm must fire while the activity is backgrounded and play actual alarm audio.
+  Bundle progress=new Bundle();progress.putString("stream","Native confirmation passed; scheduling first urgent alarm\n");sendStatus(0,progress);
   JSONObject d=data(System.currentTimeMillis()+4000);store(d);runOnMainSync(()->activity.moveTaskToBack(true));awaitRing(true,15000);
   check(AlarmService.current.player.isLooping(),"Urgent alarm audio is not looping");check(AlarmService.current.wake!=null&&AlarmService.current.wake.isHeld(),"Alarm wakelock is absent");
   // Dismiss stops ringing without completing or cloning the reminder.

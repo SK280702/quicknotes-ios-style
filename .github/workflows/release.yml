@@ -65,13 +65,16 @@ jobs:
             adb shell pm grant com.quicknotes.app android.permission.POST_NOTIFICATIONS
             adb shell appops set com.quicknotes.app SCHEDULE_EXACT_ALARM allow
             adb shell appops set com.quicknotes.app USE_FULL_SCREEN_INTENT allow
+            adb logcat -c
             adb shell am instrument -w com.quicknotes.app.tests/com.quicknotes.app.NativeTests | tee build/native-tests.txt
-            rg -F 'Native alarm and confirmation tests passed' build/native-tests.txt
+            adb logcat -d > build/native-logcat.txt
+            adb shell dumpsys alarm > build/native-alarms.txt
+            python3 -c "from pathlib import Path; assert 'Native alarm and confirmation tests passed' in Path('build/native-tests.txt').read_text()"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: native-verification
-          path: build/native-tests.txt
+          path: build/native-*.txt
   release:
     needs: [native, ui]
     runs-on: ubuntu-latest

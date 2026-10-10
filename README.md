@@ -17,7 +17,7 @@ All attachments travel with the file. Local reminders work offline. Drive's prov
 
 Tap **Edit** to show/hide and drag the smart cards, or drag lists using their hamburger handles. Open a list and tap **Edit** to drag reminders or delete them. Trash buttons ask for confirmation. **Show Completed** displays checked reminders without creating copies.
 
-Tap the blue **+** to create a reminder. Date/Time/Repeat are separate switches. Photos show square previews. Urgent reminders ring like alarms with Dismiss and five-minute Snooze controls. Enable the phone's requested alarm permissions and check its alarm volume.
+Tap the blue **+** to create a reminder. Date/Time/Repeat are separate switches. Photos show square previews. Swipe left for Details/Flag/Delete, or tap a title for inline editing and quick scheduling. Drag reminders into other reminders to make subtasks. Urgent reminders ring with Dismiss and Mark As Completed controls. Enable the phone's requested alarm permissions and check its alarm volume.
 
 ## Build
 

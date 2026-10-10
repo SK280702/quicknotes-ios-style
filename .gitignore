@@ -1,0 +1,6 @@
+build/
+dist/
+.android-sdk/
+*.jks
+*.keystore
+node_modules/

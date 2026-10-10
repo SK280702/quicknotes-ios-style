@@ -7,7 +7,7 @@ public class NativeTests extends Instrumentation {
  @Override public void onCreate(Bundle args){super.onCreate(args);start();}
  JSONObject data(long due)throws Exception{return new JSONObject("{\"version\":1,\"lists\":[{\"id\":\"default\",\"title\":\"Test\",\"updated\":1}],\"items\":[]}").put("items",new JSONArray().put(new JSONObject().put("id","native-alarm-test").put("title","Native alarm verification").put("list","default").put("updated",System.currentTimeMillis()).put("due",due).put("timeEnabled",true).put("urgent",true)));}
  void store(JSONObject d)throws Exception{synchronized(MainActivity.STORE_LOCK){Reminders.write(context,d);Reminders.schedule(context,d);}}
- boolean ringing(){return AlarmService.current!=null&&AlarmService.current.player!=null&&AlarmService.current.player.isPlaying();}
+ boolean ringing(){AtomicBoolean playing=new AtomicBoolean();runOnMainSync(()->{AlarmService service=AlarmService.current;playing.set(service!=null&&service.player!=null&&service.player.isPlaying());});return playing.get();}
  void awaitRing(boolean expected,long wait)throws Exception{long end=System.currentTimeMillis()+wait;while(System.currentTimeMillis()<end){if(ringing()==expected)return;Thread.sleep(100);}check(ringing()==expected,"Unexpected alarm audio state, expected "+expected+", service="+AlarmService.current);}
  void confirmDeletion()throws Exception{
   CountDownLatch complete=new CountDownLatch(1);AtomicReference<String> result=new AtomicReference<>();AtomicReference<AlertDialog> dialog=new AtomicReference<>();

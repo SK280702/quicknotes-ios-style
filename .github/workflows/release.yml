@@ -49,6 +49,8 @@ jobs:
         run: |
           if ! gh release view v1.0.0 >/dev/null 2>&1; then
             gh release create v1.0.0 --target "$GITHUB_SHA" --title 'QuickNotes 1.0.0' --notes-file release-notes.md
+          else
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/v1.0.0" -f sha="$GITHUB_SHA" -F force=true
           fi
           gh release upload v1.0.0 dist/QuickNotes-v1.0.0.apk dist/QuickNotes-source-v1.0.0.zip dist/spec.md dist/SHA256SUMS --clobber
       - uses: actions/upload-artifact@v4

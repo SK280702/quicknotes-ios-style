@@ -1,3 +1,4 @@
+require('node:fs').mkdirSync('build',{recursive:true});
 const {chromium}=require('playwright');const assert=require('node:assert/strict');const path=require('node:path');
 (async()=>{const browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:393,height:852},deviceScaleFactor:1});const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('file://'+path.resolve('app/src/main/assets/index.html'));await page.evaluate(()=>{localStorage.clear();data=QN.empty();render();});
 await page.getByRole('button',{name:'Add List',exact:true}).click();await page.getByRole('textbox',{name:'List name'}).fill('Personal <script>');await page.locator('.sheetbar').getByRole('button',{name:'Done',exact:true}).click();assert.equal(await page.locator('.listrow').count(),2);

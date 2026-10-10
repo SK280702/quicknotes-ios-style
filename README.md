@@ -1,21 +1,21 @@
 # QuickNotes
 
-An offline Android reminders app with the familiar iOS-style layout, colored lists, smart views, subtasks, repeats, and multiple photo/file attachments per reminder.
+An offline Android reminders app with the familiar iOS-style layout, colored lists, smart views, subtasks, repeats, and multiple photos per reminder.
 
 Download the APK from [Releases](https://github.com/requiredtruth/quicknotes-ios-style/releases/latest). Android 8 or newer. Enable notifications for due reminders. For Urgent alarms, allow **Alarms & reminders** access when prompted; optionally allow lock-screen alarm display.
 
 ## Google Drive sync
 
 1. Install Google Drive and sign in.
-2. Tap the cloud button → **Create Sync File**. Choose **Drive** in Android's file picker.
-3. On another device: cloud button → **Connect Existing Sync File**, then select that same ZIP.
+2. Tap **… → Sync Settings →** **Create Sync File**. Choose **Drive** in Android's file picker.
+3. On another device: **… → Sync Settings →** **Connect Existing Sync File**, then select that same ZIP.
 4. Use **Sync Now** after edits when moving between devices. Sync also runs after saves and when returning to the app.
 
 All attachments travel with the file. Local reminders work offline. Drive's provider must support persistent read/write access; upload timing depends on Drive. Avoid simultaneous edits to the same file on two devices. This is Drive document sync, not Google Tasks or iCloud integration.
 
 ## Edit and organize
 
-Tap **Edit** to show/hide and drag the smart cards, or drag lists using their hamburger handles. Open a list and tap **Edit** to drag reminders or delete them. Trash buttons ask for confirmation. **Show Completed** displays checked reminders without creating copies.
+Tap **Edit** to show/hide and drag the smart cards, or drag lists using their hamburger handles. Drag reminders by their handles without Edit, or hold a row to lift it. Edit shows trash buttons with confirmation; full/second swipe deletion is immediate. **Show Completed** displays checked reminders. Completing a repeating reminder creates its next uncompleted occurrence with a new ID.
 
 Tap the blue **+** to create a reminder. Date/Time/Repeat are separate switches. Photos show square previews. Swipe left for Details/Flag/Delete, or tap a title for inline editing and quick scheduling. Drag reminders into other reminders to make subtasks. Urgent reminders ring with Dismiss and Mark As Completed controls. Enable the phone's requested alarm permissions and check its alarm volume.
 

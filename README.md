@@ -1,28 +1,27 @@
 # QuickNotes
 
-An offline Android reminders app with the familiar iOS-style layout, colored lists, smart views, subtasks, repeats, and multiple photos per reminder.
+Offline Android reminders with an iOS-inspired layout, colored lists, sections, subtasks, repeats, photos, and urgent alarms. Android 8 or newer.
 
-Download the APK from [Releases](https://github.com/requiredtruth/quicknotes-ios-style/releases/latest). Android 8 or newer. Enable notifications for due reminders. For Urgent alarms, allow **Alarms & reminders** access when prompted; optionally allow lock-screen alarm display.
+Download the APK from [Releases](https://github.com/requiredtruth/quicknotes-ios-style/releases/latest). Allow notifications and **Alarms & reminders** for urgent ringing.
 
-## Google Drive sync
+## Organize
 
-1. Install Google Drive and sign in.
-2. Tap **… → Sync Settings →** **Create Sync File**. Choose **Drive** in Android's file picker.
-3. On another device: **… → Sync Settings →** **Connect Existing Sync File**, then select that same ZIP.
-4. Use **Sync Now** after edits when moving between devices. Sync also runs after saves and when returning to the app.
+Tap a list’s **… → Add Section**, name it, and drag reminders onto its section header or empty area. Others collects unassigned reminders and disappears when every reminder is assigned. Sections have stable IDs and separate order values that sync across devices. Hold a section header to reorder it, or use its **… → Move Up / Move Down** controls. Hold a list row to reorder lists; list hamburger handles are hidden. Reminder handles and long-press dragging remain available.
 
-All attachments travel with the file. Local reminders work offline. Drive's provider must support persistent read/write access; upload timing depends on Drive. Avoid simultaneous edits to the same file on two devices. This is Drive document sync, not Google Tasks or iCloud integration.
+Tap a reminder for inline editing. Quick-bar order is Date, Time, Urgent, Repeat, Tags, Flag, Photos; the scheduling buttons appear when a date is enabled. Swipe left for Details, Flag, Delete; a full or second left swipe expands Delete and folds the reminder away. Recently Deleted appears after a deletion, retains reminders and photos for 30 days, and supports Restore or **… → Clear Recently Deleted** with confirmation.
 
-## Edit and organize
+New lists have 30 preset icons, emoji entry, 18 preset colors, a custom picker, and editable hex. Icons and exact hex colors travel with sync. **… → Settings → Theme** selects System, Light, or Dark, including the Android system bars and outer background. Location options and location permissions have been removed.
 
-Tap **Edit** to show/hide and drag the smart cards, or drag lists using their hamburger handles. Drag reminders by their handles without Edit, or hold a row to lift it. Edit shows trash buttons with confirmation; full/second swipe deletion is immediate. **Show Completed** displays checked reminders. Completing a repeating reminder creates its next uncompleted occurrence with a new ID.
+## Sync and backup
 
-Tap the blue **+** to create a reminder. Date/Time/Repeat are separate switches. Photos show square previews. Swipe left for Details/Flag/Delete, or tap a title for inline editing and quick scheduling. Drag reminders into other reminders to make subtasks. Urgent reminders ring with Dismiss and Mark As Completed controls. Enable the phone's requested alarm permissions and check its alarm volume.
+**Sync file:** Install Drive and sign in, then choose **Settings → Create Sync File**, select Drive, and save the ZIP. On other devices, **Connect Existing Sync File** selects the same file. Sync runs after edits, on return, or with **Sync Now**. Avoid simultaneous changes to this shared document; provider upload timing varies. Portable ZIP backups include photos and recently deleted content.
+
+**Google account / private app data:** Settings provides **Sign in with Google** through Google Play services authorization, requesting only `drive.appdata`. Device snapshots merge reminders, sections, deletion records and photos, then save automatically after edits and on return. Each installation writes its own snapshot to avoid two devices overwriting one file. Tokens stay outside reminder data and the WebView.
+
+**Developer setup required:** Google account sync is implemented but cannot authenticate until a Google Cloud project has Drive API enabled, an OAuth consent configuration, and an Android OAuth client registered for package `com.quicknotes.app` and the release certificate SHA-1 (see spec.md). No Google Cloud registration or live Google account sync was completed in this release. Existing sync-file and backup methods remain usable without developer OAuth configuration.
 
 ## Build
 
-Install JDK 17, Node.js 20+, curl, unzip, and zip. Run `./install.sh`, `./cli.sh test`, and `./build.sh`. `./run.sh` installs and launches via adb if available. `ANDROID_SDK_ROOT` selects an existing SDK. The Android 15 native alarm/confirmation test APK is built with `./tests/android/build.sh` and used only by CI. Stable release signing requires the private release key; developer builds use their own generated key.
+JDK 17+, Python 3, Node.js 20+, curl, unzip, zip, and Android SDK platform/build-tools 35. `./install.sh`, `./cli.sh test`, `./build.sh`; `./run.sh` installs and launches via adb. `ANDROID_SDK_ROOT` selects an SDK. `scripts/google_deps.py` resolves Google AuthorizationClient libraries for this standalone build. A private retained signing key is required for updates; developer builds generate a separate key. `npm ci`, `npx playwright install --with-deps chromium`, `npm run test:ui` verify the browser UI. CI runs native alarm, sync-model, retention, photo-extra, and theme checks on Android 15 before publishing.
 
-Optional UI test: `npm ci`, `npx playwright install --with-deps chromium`, then `npm run test:ui`.
-
-See [spec.md](spec.md) for features, architecture, sync rules, limits, and validation. QuickNotes uses original assets and is not affiliated with Apple. It does not implement every iOS Reminders feature.
+See [spec.md](spec.md). Original app assets; not affiliated with Apple and not exhaustive iOS parity.

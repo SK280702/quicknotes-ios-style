@@ -60,7 +60,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           script: |
-            adb install dist/QuickNotes-v1.3.0.apk
+            adb install dist/QuickNotes-v1.4.0.apk
             adb install build/native-tests.apk
             adb shell pm grant com.quicknotes.app android.permission.POST_NOTIFICATIONS
             adb shell appops set com.quicknotes.app SCHEDULE_EXACT_ALARM allow
@@ -96,25 +96,25 @@ jobs:
       - name: Compile source and verify APK
         run: |
           ./build.sh
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose release/QuickNotes-v1.3.0.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose release/QuickNotes-v1.4.0.apk
           python3 tests/check_release.py
       - name: Prepare assets
         run: |
-          cp release/QuickNotes-v1.3.0.apk dist/QuickNotes-v1.3.0.apk
-          git archive --format=zip --prefix=QuickNotes/ HEAD -o dist/QuickNotes-source-v1.3.0.zip
+          cp release/QuickNotes-v1.4.0.apk dist/QuickNotes-v1.4.0.apk
+          git archive --format=zip --prefix=QuickNotes/ HEAD -o dist/QuickNotes-source-v1.4.0.zip
           cp spec.md dist/spec.md
           cd dist
-          sha256sum QuickNotes-v1.3.0.apk QuickNotes-source-v1.3.0.zip spec.md > SHA256SUMS
+          sha256sum QuickNotes-v1.4.0.apk QuickNotes-source-v1.4.0.zip spec.md > SHA256SUMS
       - name: Publish release from main
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if ! gh release view v1.3.0 >/dev/null 2>&1; then
-            gh release create v1.3.0 --target "$GITHUB_SHA" --title 'QuickNotes 1.3.0' --notes-file release-notes.md
+          if ! gh release view v1.4.0 >/dev/null 2>&1; then
+            gh release create v1.4.0 --target "$GITHUB_SHA" --title 'QuickNotes 1.4.0' --notes-file release-notes.md
           else
-            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/v1.3.0" -f sha="$GITHUB_SHA" -F force=true
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/v1.4.0" -f sha="$GITHUB_SHA" -F force=true
           fi
-          gh release upload v1.3.0 dist/QuickNotes-v1.3.0.apk dist/QuickNotes-source-v1.3.0.zip dist/spec.md dist/SHA256SUMS --clobber
+          gh release upload v1.4.0 dist/QuickNotes-v1.4.0.apk dist/QuickNotes-source-v1.4.0.zip dist/spec.md dist/SHA256SUMS --clobber
       - uses: actions/upload-artifact@v4
         if: always()
         with:

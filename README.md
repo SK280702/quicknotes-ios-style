@@ -25,3 +25,6 @@ New lists have 30 preset icons, emoji entry, 18 preset colors, a custom picker, 
 JDK 17+, Python 3, Node.js 20+, curl, unzip, zip, and Android SDK platform/build-tools 35. `./install.sh`, `./cli.sh test`, `./build.sh`; `./run.sh` installs and launches via adb. `ANDROID_SDK_ROOT` selects an SDK. `scripts/google_deps.py` resolves Google AuthorizationClient libraries for this standalone build. A private retained signing key is required for updates; developer builds generate a separate key. `npm ci`, `npx playwright install --with-deps chromium`, `npm run test:ui` verify the browser UI. CI runs native alarm, sync-model, retention, photo-extra, and theme checks on Android 15 before publishing.
 
 See [spec.md](spec.md). Original app assets; not affiliated with Apple and not exhaustive iOS parity.
+
+### 1.4.0
+Add QuickNotes from your launcher widget picker. Select any smart or user list and a theme; widgets always sort by due date. Long press the app icon for New Reminder. Lists now save six sort options, and Others only houses unassigned reminders.

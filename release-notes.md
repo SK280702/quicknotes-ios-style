@@ -1,12 +1,9 @@
-QuickNotes 1.3.0
+# QuickNotes 1.4.0
 
-- Optional named sections with stable IDs and synced order, reminder drops, section dragging/Move Up/Down, and automatic Others for unassigned reminders.
-- Recently Deleted with 30-day retention, nested reminder/photo restoration and confirmed clearing. Sync tombstones prevent resurrection.
-- Full-swipe Delete expands over Details/Flag and a short fold animation precedes deletion.
-- Organized Settings; System/Light/Dark themes reach the outer background and Android bars.
-- Thirty preset list icons, emoji selection, eighteen colors, custom picker and exact synced hex values.
-- Quick-bar Time/Urgent/Repeat follow Date. List hamburger handles hidden; long-press list drag retained.
-- Location features and permissions removed. First-photo metadata is available to custom notification listeners without showing photos in standard notifications.
-- Google private app-data sync implementation uses current Google authorization, separate device snapshots, section-aware merge and bundled photos. Developer Google Cloud/OAuth package-and-certificate registration is still required; live Google sign-in/Drive transfer has not been verified. Existing ZIP document sync remains available.
-
-Validation: 14 model tests, browser UI regression suite, compiled/verified update-compatible signed APK, source-match verification, and CI Android 15 native alarm/notification/section/retention/theme checks before release publication. Source ZIP and spec.md included.
+- Resizable home-screen widgets for All, Scheduled, Today, Flagged, or any user list. Each widget has independent system/light/dark appearance and always shows earliest due reminders first, with undated reminders last. Tap a row to edit, + to create, or ⚙ to customize.
+- Long press the launcher icon for New Reminder. Long press empty space in the in-app home screen for the same quick-create menu.
+- Saved list sorting: Manual, Due date, Priority, A–Z, Flagged first, and Newest first. User-list sorting syncs with its list.
+- Fixed accidental list navigation after dragging and competing long-press handlers on drag handles.
+- Others is subtly gray and appears only for visible unassigned reminders. Drag a reminder to the remove-from-section area to recreate Others.
+- Gemini App Actions omitted: Google requires Play Store publication and separate App Actions approval; this is a GitHub-distributed APK.
+- Signed with the existing release certificate for in-place upgrades. APK, source ZIP, spec.md, and SHA256SUMS are included.

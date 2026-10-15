@@ -14,7 +14,7 @@ function badge(icon,color){if(icon?.startsWith("emoji:"))return `<span class="ba
 function handle(id,group,title){return `<button class="draghandle" aria-label="Drag ${esc(title)} to reorder" data-id="${id}" data-group="${esc(group)}" onpointerdown="startDrag(event)" onkeydown="dragKey(event)" onclick="toast('Drag this handle to reorder. Arrow keys also work.')">${svg('list')}</button>`;}
 function lists(){return data.lists.filter(l=>!l.deleted).sort((a,b)=>(a.order||0)-(b.order||0));}
 function items(v,done=false){return QN.visible(data,v,query,done);}
-function navigate(v){if(Date.now()<ignoreClickUntil)return;view=v;sort=(data.lists.find(l=>l.id===v)?.sortBy)||ui.sorts?.[v]||'manual';query='';editingLists=false;showDone=!!ui.completed[v]||v==='completed';render();window.scrollTo(0,0);}
+function navigate(v){if(Date.now()<ignoreClickUntil&&suppressedListIds.has(v))return;view=v;sort=(data.lists.find(l=>l.id===v)?.sortBy)||ui.sorts?.[v]||'manual';query='';editingLists=false;showDone=!!ui.completed[v]||v==='completed';render();window.scrollTo(0,0);}
 function render(){QN.purge(data);const active=lists(),list=active.find(l=>l.id===view),color=list?.color||'#007aff';document.documentElement.style.setProperty('--accent',color);
 let html=`<div class="screen"><div class="topbar">${view==='home'?'<span></span>':`<button onclick="navigate('home')">${svg('back')} Lists</button>`}<div style="display:flex"><button aria-label="More" onclick="topMenu(event)">${svg('dots')}</button></div></div>`;
 if(view==='home'){

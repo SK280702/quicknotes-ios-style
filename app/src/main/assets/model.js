@@ -58,5 +58,14 @@ function parseReminder(source,lists=[],now=Date.now()){
  text=text.replace(/^\s*(?:please\s+)?(?:(?:remind me|reminder)(?:\s+to)?|add (?:a )?reminder(?: to)?)\s*/i,'').replace(/\b(?:and make it|and mark it|make it|mark it|due|please)\s*$/ig,'').replace(/\s+/g,' ').replace(/(?:[\s,;:]+|\band\b|\bplease\b)+$/ig,'').replace(/^[\s,;:]+/g,'').trim();
  out.title=text||original;delete out.noFlag;delete out.noUrgent;return {draft:out,warnings,original};
 }
-const api={parseReminder,compare,uid,empty,validate,merge,touch,nextDue,complete,rollover,removeList,visible,reorder,moveInto,trash,recent,purge,restore,moveSection,RETENTION};if(typeof module!=='undefined')module.exports=api;root.QN=api;
+function earlySetting(i){
+ const factors={minutes:1,hours:60,days:1440,weeks:10080},minutes=Number(i.earlyMinutes)||0;
+ let unit=i.earlyUnit,amount=Number(i.earlyAmount);
+ if(unit==='months')return {value:amount===1?'month':'custom',unit,amount:amount||1};
+ const explicit=Object.hasOwn(factors,unit)&&Number.isInteger(amount)&&amount>0&&amount<=999&&amount*factors[unit]===minutes;
+ if(!explicit){unit='minutes';amount=minutes||5;if(minutes>999)for(const u of ['weeks','days','hours'])if(minutes%factors[u]===0&&minutes/factors[u]<=999){unit=u;amount=minutes/factors[u];break;}}
+ const preset=[0,5,15,30,60,120,1440,2880,10080].includes(minutes);
+ return {value:explicit&&unit!=='minutes'?'custom':preset?String(minutes):minutes?'custom':'0',unit,amount};
+}
+const api={earlySetting,parseReminder,compare,uid,empty,validate,merge,touch,nextDue,complete,rollover,removeList,visible,reorder,moveInto,trash,recent,purge,restore,moveSection,RETENTION};if(typeof module!=='undefined')module.exports=api;root.QN=api;
 })(typeof window==='undefined'?globalThis:window);

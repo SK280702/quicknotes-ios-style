@@ -29,3 +29,10 @@ test('language capture reviews dates, repeats, list names, flags and urgent with
  p=QN.parseReminder('Call on 2026-02-30',ls,now);assert.ok(p.warnings.some(w=>w.includes('Invalid')));
  p=QN.parseReminder('Read in one month',ls,new Date(2026,0,31,12).getTime());assert.equal(new Date(p.draft.due).getMonth(),1);assert.equal(new Date(p.draft.due).getDate(),28);
 });
+
+test('custom early intervals preserve units and reopen legacy minute totals safely',()=>{
+ assert.deepEqual(QN.earlySetting({earlyMinutes:30240,earlyUnit:'weeks',earlyAmount:3}),{value:'custom',unit:'weeks',amount:3});
+ assert.deepEqual(QN.earlySetting({earlyMinutes:30240,earlyUnit:'minutes',earlyAmount:3}),{value:'custom',unit:'weeks',amount:3});
+ assert.deepEqual(QN.earlySetting({earlyMinutes:180,earlyUnit:'hours',earlyAmount:3}),{value:'custom',unit:'hours',amount:3});
+ assert.deepEqual(QN.earlySetting({earlyMinutes:0,earlyUnit:'months',earlyAmount:2}),{value:'custom',unit:'months',amount:2});
+});

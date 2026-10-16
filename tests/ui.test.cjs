@@ -43,7 +43,8 @@ let newDraft=await page.evaluate(()=>data.items.find(i=>i.title==='buy milk'));a
 await page.evaluate(id=>editItem(id),newDraft.id);assert.equal(await page.locator('#eearly').inputValue(),'month');
 await page.locator('#eearly').selectOption('custom');await page.getByRole('spinbutton',{name:'Early reminder amount'}).fill('3');await page.getByRole('combobox',{name:'Early reminder unit'}).selectOption('weeks');await page.getByRole('button',{name:'Save Reminder'}).click();
 assert.equal(await page.evaluate(()=>data.items.find(i=>i.title==='buy milk').earlyMinutes),30240);
-await page.evaluate(id=>scheduleEdit(id),newDraft.id);await page.locator('#qearly').selectOption('month');await page.locator('.sheetbar').getByRole('button',{name:'Done',exact:true}).click();
+await page.evaluate(id=>editItem(id),newDraft.id);assert.equal(await page.getByRole('spinbutton',{name:'Early reminder amount'}).inputValue(),'3');assert.equal(await page.getByRole('combobox',{name:'Early reminder unit'}).inputValue(),'weeks');await page.locator('#title').fill('buy milk');await page.getByRole('button',{name:'Save Reminder'}).click();assert.equal(await page.locator('#sheet').isVisible(),false);
+await page.evaluate(id=>scheduleEdit(id),newDraft.id);assert.equal(await page.getByRole('spinbutton',{name:'Early reminder amount'}).inputValue(),'3');assert.equal(await page.getByRole('combobox',{name:'Early reminder unit'}).inputValue(),'weeks');await page.locator('#qearly').selectOption('month');await page.locator('.sheetbar').getByRole('button',{name:'Done',exact:true}).click();
 assert.equal(await page.evaluate(()=>data.items.find(i=>i.title==='buy milk').earlyUnit),'months');
 await page.evaluate(id=>{const item=findItem(id);item.url='https://example.com/page';navigate('all');},newDraft.id);assert.equal(await page.locator('.link-card img').count(),1);
 await page.screenshot({animations:'disabled',path:'build/QuickNotes-v15-reminders.png'});

@@ -1,3 +1,13 @@
+# QuickNotes 1.6.0
+
+[Download APK, source and spec](https://github.com/requiredtruth/quicknotes-ios-style/releases/latest)
+
+Widget-level completion controls, repaired flagged urgent alarm display, a themed time picker with cumulative interval buttons, immediate Custom Repeat rules, conditional scheduling controls, completed-parent protection and a centered Add Reminder button.
+
+Widget configuration → **Complete reminders in this widget** controls check circles for that entire widget. Alarm setup offers notification, exact alarm and full-screen access. Android normally uses an expanded alert while another app is actively being used.
+
+See [spec.md](spec.md) for current behavior and validation.
+
 # QuickNotes 1.5.0
 
 [Download the latest APK and source](https://github.com/requiredtruth/quicknotes-ios-style/releases/latest)

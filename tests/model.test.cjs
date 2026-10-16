@@ -36,3 +36,5 @@ test('custom early intervals preserve units and reopen legacy minute totals safe
  assert.deepEqual(QN.earlySetting({earlyMinutes:180,earlyUnit:'hours',earlyAmount:3}),{value:'custom',unit:'hours',amount:3});
  assert.deepEqual(QN.earlySetting({earlyMinutes:0,earlyUnit:'months',earlyAmount:2}),{value:'custom',unit:'months',amount:2});
 });
+
+test('completed reminders cannot become new subtask parents',()=>{const d=QN.empty();d.items=[{id:'child',list:'default',updated:1},{id:'done',list:'default',done:true,updated:1}];assert.equal(QN.moveInto(d,'child','done'),false);assert.equal(d.items[0].parent,undefined);});

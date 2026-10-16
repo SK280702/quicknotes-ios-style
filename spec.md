@@ -1,3 +1,25 @@
+# QuickNotes 1.6.0
+
+## Current widget and scheduling behavior
+
+- Completion belongs to each widget configuration: **Complete reminders in this widget**, enabled by default. When off, that widget hides all check circles and its receiver rejects completion taps. When on, every incomplete row can be completed without opening the app. Different widgets can choose different values. Legacy reminder-level `widgetComplete` fields are ignored and no longer shown in the reminder editor. Due sorting/filtering, recurrence and repeated-tap protection are preserved.
+- Add List is an outlined square-plus icon, left of More. The Add Reminder plus is centered in the bottom toolbar; Describe remains available beside it.
+- Both schedule editors use the app theme and a shared hour/minute/AM–PM picker. A date/time preview and +15/+30 minute, +1/+2/+3/+6/+12 hour and +1 day buttons share that picker. Increments add to the currently selected date/time, so taps accumulate and can cross days/months/years. The entire picker and interval controls hide when Time is disabled. The entire Early Reminders group, including custom amount/unit controls, hides when Date is disabled.
+- Custom Repeat selection immediately shows frequency, interval and calendar rule controls in the current editor, preserving unsaved reminder fields. Rules are validated on Save; cancellation discards draft changes. Existing quick-bar custom repeat editing remains available.
+- Completed reminders, deleted reminders and descendants of completed reminders cannot be chosen as new parents; cycle checks still apply. Dragging to a completed parent is rejected.
+
+## Alarm display repair
+
+The foreground alarm now uses one audible IMPORTANCE_HIGH alarm channel (`ringing-alarms-v2`) with ALARM audio attributes, public lock-screen visibility and only-alert-once updates. It no longer posts a competing regular alert while ringing. Its activity PendingIntent explicitly opts into Android 15 creator background-start privileges. The alarm activity declares showWhenLocked/turnScreenOn, uses an alarm task and full-screen window, and retains snooze/dismiss/complete controls. Flagged urgent alarms open directly when QuickNotes is already visible, including returning to an ongoing alarm. In the background, Android owns full-screen delivery; while another app is actively in use the system normally shows an expanded high-priority alert. Special full-screen access, notification access, exact alarm access and an enabled high-priority alarm channel must be allowed. The setup flow offers full-screen access after notification/exact alarm access. Permission denial is respected.
+
+On alarm timeout, unfinished flagged reminders retain their due status notification. Completing/deleting/snoozing stops the relevant audio and display. Tests verify actual activity resumption with the device asleep/locked, actual foreground display, early notification followed by the due alarm, screen snooze, and widget-level enable/disable behavior.
+
+## Validation
+
+18 model tests plus Playwright UI regression coverage; Android 15 instrumentation gates release. The APK uses the existing release signing key and versionCode 7. Source, compiled assets, manifest and dex are checked against the published APK. Source ZIP, spec.md and SHA256SUMS accompany the release.
+
+---
+
 # QuickNotes 1.5.0
 
 ## Reminder capture, widgets and alert changes

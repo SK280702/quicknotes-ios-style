@@ -1,13 +1,13 @@
-# QuickNotes 1.5.0
+# QuickNotes 1.6.0
 
-- Opt-in widget check circles complete reminders without opening the app.
-- List titles no longer select text during sorting; Edit Lists and always-visible top-bar Add List icon.
-- Website primary-image previews beside URLs when available.
-- Complete/delete dismisses related notifications and stops alarms; flagged due alerts persist in the status bar.
-- Urgent alarms gain five-minute snooze; flagged urgent reminders request full-screen alarms.
-- Fixed root Back behavior and app-themed widget configuration.
-- Relative time buttons from +15 minutes through +1 day.
-- Typed/voice English reminder capture with a reviewable editable draft for dates, time, repeats, lists, flag and urgent.
-- Expanded early presets, calendar month offsets and custom minutes/hours/days/weeks/months; due-time alert still fires.
+- Widget-wide “Complete reminders in this widget” setting. Enable or disable check circles for the whole widget; reminders no longer need individual permission. Replayed taps cannot uncomplete or duplicate reminders.
+- Reworked flagged urgent alarm display: audible high-priority alarm channel, Android 15 activity PendingIntent opt-in, lock-screen activity flags, and direct alarm-screen display while QuickNotes is visible. Removed the duplicate alert that competed with the alarm notification. Alarm setup now includes full-screen access.
+- Add List uses a square-plus icon. Add Reminder is centered at the bottom.
+- A themed hour/minute/AM–PM picker contains the interval buttons. Each tap adds to the selected time, including across midnight.
+- Time intervals appear only when Time is on. All Early Reminder controls appear only when Date is on.
+- Custom Repeat immediately opens its rule controls in both reminder editors; no save-and-reopen workaround.
+- Completed reminders and their descendants cannot be selected as new subtask parents.
 
-Includes signed upgrade-compatible APK, source ZIP, spec.md and SHA256SUMS. Full-screen alarms and exact delivery depend on Android access/settings; voice-to-text uses the phone's installed recognizer. URL previews require an accessible HTTPS website image. Android may allow users to dismiss ongoing status notifications.
+Full-screen alarm tests verify an actual resumed alarm activity with the emulator locked and with QuickNotes in the foreground, plus snooze. Android uses an expanded alert while another app is actively in use; lock-screen full-screen display requires full-screen notification access and an enabled high-priority alarm channel.
+
+Assets: signed upgrade-compatible APK, source ZIP, spec.md and SHA256SUMS.

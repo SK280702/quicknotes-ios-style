@@ -15,5 +15,5 @@ fi
 python3 scripts/compile.py
 (cd build/dex && zip -q -u ../unsigned.apk classes*.dex)
 "$BT/zipalign" -f -p 4 build/unsigned.apk build/aligned.apk
-"$BT/apksigner" sign --ks "$KEY" --ks-pass "pass:$PASS" --out dist/QuickNotes-v1.5.0.apk build/aligned.apk
-"$BT/apksigner" verify --verbose dist/QuickNotes-v1.5.0.apk
+"$BT/apksigner" sign --ks "$KEY" --ks-pass "pass:$PASS" --out dist/QuickNotes-v1.6.0.apk build/aligned.apk
+"$BT/apksigner" verify --verbose dist/QuickNotes-v1.6.0.apk

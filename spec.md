@@ -1,3 +1,25 @@
+# QuickNotes 1.5.0
+
+## Reminder capture, widgets and alert changes
+
+- The top bar keeps an Add List icon immediately left of More on every screen. More → Edit Lists enables list editing. List labels cannot start text selection while dragging.
+- Reminder editor includes an opt-in **Complete from widget** switch. Widgets show a separate completion circle only for opted-in reminders. Completing runs entirely in a receiver, updates storage and widgets, cancels alerts, and clones repeating occurrences. Repeated or stale widget actions cannot toggle completed reminders back or complete a newer due date. Row-title taps still open the reminder.
+- Widget configuration opens with the current app theme, including spinner popup colors and system bars. Widget appearance defaults to App theme; System/Light/Dark remain selectable.
+- HTTPS links display the page's Open Graph primary image, falling back to Twitter image, image_src or the first image if available. A native metadata fetcher follows up to five HTTPS redirects, blocks private addresses, fetches at most 512 KiB HTML and 2 MiB raster data, downsamples to 640px, and caches success for seven days / missing previews for six hours. Up to 100 cache entries are retained. Websites with no accessible image keep a plain URL. No website scripts run in the app. HTTP-only sites retain plain URLs.
+- Completing or deleting in the app, widget, sync or notification cancels the corresponding notification, early alert, snooze and active alarm. A due flagged reminder has an ongoing status-bar notification until dismissed/completed/deleted; modern Android may still let users swipe ongoing notifications away. This uses Android notifications rather than privileged system timer UI.
+- Urgent notification and alarm-screen actions include **Snooze 5 min**, preserving the reminder's identity and due date. Flagged + urgent reminders request a full-screen alarm. Android decides whether to launch it or show an expanded alert based on full-screen access, lock state and system policy. Urgent alarms require notification and exact alarm access; alarm volume controls audio.
+- Home Back does not traverse WebView history. Android back callbacks close overlays, leave inline editing, return a list to home, or background the root task.
+- Time editors offer +15/+30 minutes and +1/+2/+3/+6/+12 hours / +1 day from now. They turn on date/time together.
+- **Describe Reminder** opens typed English capture or Android's voice-to-text activity. Parsing runs locally with no LLM service: relative times (including word amounts), today/tomorrow, weekdays, ISO dates, named month dates, AM/PM or 24-hour times, daily/weekly/monthly and interval repeats, named lists, flag and urgent. The recognized source and warnings are shown in the normal editable draft. User must explicitly save. Unsupported phrases remain visible for review. Voice recognition availability/offline behavior depends on the phone's recognizer.
+- Early reminders add a separate alert without consuming the due alert: None, 5/15/30 minutes, 1/2 hours, 1/2 days, 1 week, 1 calendar month, or custom 1–999 minutes/hours/days/weeks/months. Calendar month offsets clamp at month ends. Exact early scheduling uses existing permission if granted, otherwise Android's inexact delivery; normal due notifications remain subject to Android scheduling. Early alerts never start urgent audio.
+- New per-reminder widget and early fields remain in the same version-1 JSON records and use existing timestamp-based sync/backup/recurrence cloning.
+
+## Verification for 1.5.0
+
+Model tests cover parser dates, relative times, repeat rules, unknown lists, regex-sensitive list names and negative flag/urgent wording. Playwright covers parsing review, editor persistence, widget opt-in, quick times, custom early rules, month presets, dictation callback, URL card and root navigation, alongside existing interactions. Android instrumentation covers actual background urgent audio, snooze, recurrence, notification actions/cancellation, calendar month offsets, metadata image selection, receiver completion idempotency/opt-in and early delivery. CI gates release publication on both UI and Android 15 instrumentation jobs. Published APK keeps the previous release's signing certificate and versionCode increments to 6.
+
+---
+
 # QuickNotes Android specification
 
 Version 1.3.0; package `com.quicknotes.app`; versionCode 4; Android 8+ / API 26 minimum; API 35 target.

@@ -10,3 +10,7 @@ body,#app{background:var(--bg);min-height:100dvh}.search{background:var(--line)}
 
 .temporary-section .section-head{background:rgba(128,128,128,.10);border-radius:12px;color:var(--muted)}
 .unsection-drop{color:var(--muted);font-size:13px;text-align:center;border:1px dashed #9996;border-radius:12px;padding:18px;margin:12px 0 72px}.unsection-drop.drop-target{background:#007aff22}.listrow,.section-head{touch-action:pan-y}.draghandle{touch-action:none}
+
+/* List labels must never start Android's text selection during sorting. */
+.listrow,.listrow *,.section-head,.section-head *{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.interval-buttons{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px}.interval-buttons button{border:1px solid var(--separator,#8885);border-radius:14px;padding:7px 10px;font-size:14px}.early-custom{display:flex;gap:8px;padding:10px}.early-custom input{width:95px}.link-card{display:flex;align-items:center;gap:10px;text-align:left;border-radius:10px;background:var(--field,#8881);padding:8px;margin-top:8px;width:100%;overflow:hidden}.link-card img{width:84px;height:64px;object-fit:cover;border-radius:6px}.link-card span{overflow-wrap:anywhere;font-size:13px}.capture-input{min-height:145px;width:100%;padding:12px}.capture-help{font-size:14px;line-height:1.5}.footer button[aria-label="Describe Reminder"]{font-size:15px}

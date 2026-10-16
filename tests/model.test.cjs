@@ -16,3 +16,16 @@ test('Recently Deleted retains nested reminders for 30 days and restores photos'
 test('clear Recently Deleted keeps tombstones and restores deleted-list items safely',()=>{const d=QN.empty(),now=Date.now();d.items=[{id:'a',list:'default',title:'a',updated:1}];QN.removeList(d,'default',now);assert.equal(QN.recent(d,now).length,1);assert.ok(QN.restore(d,'a',now+1));assert.ok(d.lists.some(l=>l.id===d.items[0].list&&!l.deleted));QN.trash(d,'a',now+2);QN.purge(d,['a'],now+3);assert.equal(QN.recent(d,now+4).length,0);assert.equal(d.items[0].purged,true);});
 
 test('sort modes order due dates first with deterministic ties and sync list preferences',()=>{const a=[{id:'c',title:'Zulu',due:0},{id:'b',title:'Beta',due:200},{id:'a',title:'Alpha',due:100}];assert.deepEqual([...a].sort((a,b)=>QN.compare(a,b,'due')).map(i=>i.id),['a','b','c']);assert.deepEqual([...a].sort((a,b)=>QN.compare(a,b,'title')).map(i=>i.id),['a','b','c']);a[0].flag=true;assert.equal([...a].sort((a,b)=>QN.compare(a,b,'flagged'))[0].id,'c');const d=QN.empty();d.lists[0].sortBy='due';QN.touch(d.lists[0]);assert.equal(QN.merge(QN.empty(),d).lists[0].sortBy,'due');});
+
+test('language capture reviews dates, repeats, list names, flags and urgent without saving',()=>{
+ const now=new Date(2026,9,15,12,0).getTime(),ls=[{id:'shop',title:'Shopping'},{id:'special',title:'R&D (Home)'}];
+ let p=QN.parseReminder('Remind me to buy milk tomorrow at 5 pm in my Shopping list, flagged and urgent',ls,now);
+ assert.equal(p.draft.title,'buy milk');assert.equal(p.draft.list,'shop');assert.equal(p.draft.flag,true);assert.equal(p.draft.urgent,true);assert.equal(new Date(p.draft.due).getDate(),16);assert.equal(new Date(p.draft.due).getHours(),17);
+ p=QN.parseReminder('call Eric in 15 minutes',ls,now);assert.equal(p.draft.due,now+15*60000);assert.equal(p.draft.title,'call Eric');
+ p=QN.parseReminder('Read in R&D (Home) list every 2 weeks tomorrow at noon',ls,now);assert.equal(p.draft.list,'special');assert.equal(p.draft.repeatRule.interval,2);assert.equal(p.draft.repeatRule.frequency,'weekly');assert.equal(p.draft.title,'Read');
+ p=QN.parseReminder('Buy milk tomorrow morning not urgent do not flag',ls,now);assert.equal(p.draft.flag,false);assert.equal(p.draft.urgent,false);assert.equal(new Date(p.draft.due).getHours(),9);
+ p=QN.parseReminder('call tomorrow in my Missing list',ls,now);assert.ok(p.warnings.some(w=>w.includes('not found')));
+ p=QN.parseReminder('Call every Monday at 9 am',ls,now);assert.equal(p.draft.repeatRule.days[0],1);assert.equal(new Date(p.draft.due).getDay(),1);
+ p=QN.parseReminder('Call on 2026-02-30',ls,now);assert.ok(p.warnings.some(w=>w.includes('Invalid')));
+ p=QN.parseReminder('Read in one month',ls,new Date(2026,0,31,12).getTime());assert.equal(new Date(p.draft.due).getMonth(),1);assert.equal(new Date(p.draft.due).getDate(),28);
+});

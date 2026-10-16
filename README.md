@@ -1,3 +1,11 @@
+# QuickNotes 1.5.0
+
+[Download the latest APK and source](https://github.com/requiredtruth/quicknotes-ios-style/releases/latest)
+
+New: reminder-level widget completion, URL image cards, five-minute alarm snooze, flagged urgent full-screen alarms, persistent flagged due notifications, typed/voice capture with draft review, relative time buttons and custom early alerts. Add List is an always-visible top-bar icon; More → Edit Lists edits/sorts lists. Widget configuration follows the app theme.
+
+See [spec.md](spec.md) for supported capture wording, Android permission behavior and verification details.
+
 # QuickNotes
 
 Offline Android reminders with an iOS-inspired layout, colored lists, sections, subtasks, repeats, photos, and urgent alarms. Android 8 or newer.

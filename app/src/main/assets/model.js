@@ -26,5 +26,37 @@ function removeList(data,id,now=Date.now()){const l=data.lists.find(x=>x.id===id
 function visible(data,view,query='',showDone=false){const today=new Date();today.setHours(0,0,0,0);const tomorrow=new Date(today);tomorrow.setDate(today.getDate()+1);return data.items.filter(i=>!i.deleted&&data.lists.some(l=>l.id===i.list&&!l.deleted)&&(showDone||!i.done)&&(view==='all'||view==='completed'&&i.done||view==='today'&&i.due&&i.due<tomorrow.getTime()||view==='scheduled'&&i.due||view==='flagged'&&i.flag||view===i.list)&&(!query||[i.title,i.notes,i.tags].join(' ').toLowerCase().includes(query.toLowerCase())));}
 function reorder(records,id,target,now=Date.now()){const a=[...records].sort((x,y)=>(x.order||0)-(y.order||0));const from=a.findIndex(x=>x.id===id),to=a.findIndex(x=>x.id===target);if(from<0||to<0||from===to)return false;const [item]=a.splice(from,1);a.splice(to,0,item);a.forEach((x,n)=>{x.order=n;touch(x,now);});return true;}
 function compare(a,b,mode){const title=()=>String(a.title||'').localeCompare(String(b.title||''));const due=()=>(a.due||Infinity)-(b.due||Infinity);let n=mode==='title'?title():mode==='due'?due():mode==='priority'?(b.priority||0)-(a.priority||0):mode==='flagged'?Number(!!b.flag)-Number(!!a.flag):mode==='newest'?(b.createdAt||b.order||0)-(a.createdAt||a.order||0):(a.order||0)-(b.order||0);return n||title()||a.id.localeCompare(b.id);}
-const api={compare,uid,empty,validate,merge,touch,nextDue,complete,rollover,removeList,visible,reorder,moveInto,trash,recent,purge,restore,moveSection,RETENTION};if(typeof module!=='undefined')module.exports=api;root.QN=api;
+
+// Local English capture grammar. Preserve the source for review; never silently save.
+function parseReminder(source,lists=[],now=Date.now()){
+ const original=String(source).trim(),warnings=[];let text=original,day=false,time=false,relative=false;
+ const d=new Date(now),out={title:'',due:0,dateEnabled:false,timeEnabled:false,repeat:'',flag:false,urgent:false};
+ const take=(re,fn)=>{text=text.replace(re,(...args)=>{fn?.(...args);return ' ';});};
+ const number=s=>({a:1,an:1,one:1,two:2,three:3,four:4,five:5,six:6,ten:10,fifteen:15,thirty:30}[s.toLowerCase()]||Number(s));
+ take(/\b(?:not urgent|non urgent|don't make (?:it )?urgent)\b/ig,()=>{out.urgent=false;out.noUrgent=true;});
+ take(/\b(?:unflagged|do not flag|don't flag|not flagged)\b/ig,()=>{out.flag=false;out.noFlag=true;});
+ take(/\b(?:urgent|as urgent)\b/ig,()=>{if(!out.noUrgent)out.urgent=true;});
+ take(/\b(?:flag(?:ged)?(?: it)?|high priority)\b/ig,()=>{if(!out.noFlag)out.flag=true;});
+ for(const l of [...lists].filter(l=>!l.deleted).sort((a,b)=>b.title.length-a.title.length)){const escaped=l.title.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');take(new RegExp('\\b(?:in|on|to|into)\\s+(?:my\\s+|the\\s+)?'+escaped+'(?:\\s+list)?\\b','ig'),()=>out.list=l.id);}
+ take(/\b(?:in|to|on) (?:my |the )?([\w -]+?) list\b/ig,(_,name)=>warnings.push('List "'+name.trim()+'" was not found. Choose a list below.'));
+ take(/\b(?:repeat(?:ing)?\s+)?every\s+(\d+|one|two|three|four|five|six|ten|fifteen|thirty)\s+(hours?|days?|weeks?|months?|years?)\b/ig,(_,n,u)=>{out.repeat='custom';out.repeatRule={frequency:{hour:'hourly',day:'daily',week:'weekly',month:'monthly',year:'yearly'}[u.toLowerCase().replace(/s$/,'')],interval:Math.max(1,Math.min(999,number(n)))};});
+ take(/\b(?:repeat(?:ing)?\s+)?(?:every\s+)?(weekdays|weekends|daily|weekly|monthly|yearly|hourly|every day|every week|every month|every year)\b/ig,(_,r)=>out.repeat=({'every day':'daily','every week':'weekly','every month':'monthly','every year':'yearly',hourly:'custom'}[r.toLowerCase()]||r.toLowerCase()));
+ if(out.repeat==='custom'&&!out.repeatRule)out.repeatRule={frequency:'hourly',interval:1};
+ take(/\bin\s+(\d+|a|an|one|two|three|four|five|six|ten|fifteen|thirty)\s+(minutes?|mins?|hours?|hrs?|days?|weeks?|months?)\b/ig,(_,n,u)=>{const amount=number(n),unit=u.toLowerCase();if(amount<1||amount>10000){warnings.push('Check the relative time.');return;}if(unit.startsWith('month')){const date=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+amount);d.setDate(Math.min(date,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));}else if(unit.startsWith('day')||unit.startsWith('week'))d.setDate(d.getDate()+amount*(unit.startsWith('week')?7:1));else d.setTime(d.getTime()+amount*(unit.startsWith('h')?3600000:60000));day=time=relative=true;});
+ take(/\b(day after tomorrow|tomorrow|today|tonight|next week)\b/ig,(_,w)=>{w=w.toLowerCase();d.setDate(d.getDate()+({'day after tomorrow':2,tomorrow:1,'next week':7}[w]||0));day=true;if(w==='tonight'){d.setHours(20,0,0,0);time=true;}});
+ const weekdays=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+ take(/\b(?:(every|next|this)\s+|on\s+)?(sunday|monday|tuesday|wednesday|thursday|friday|saturday)s?\b/ig,(_,prefix,w)=>{const target=weekdays.indexOf(w.toLowerCase());let delta=(target-d.getDay()+7)%7;if(delta===0&&prefix!=='this')delta=7;d.setDate(d.getDate()+delta);day=true;if(prefix?.toLowerCase()==='every'){out.repeat='custom';out.repeatRule={frequency:'weekly',interval:1,days:[target]};}});
+ take(/\b(\d{4})-(\d{2})-(\d{2})\b/g,(_,y,m,date)=>{const candidate=new Date(+y,+m-1,+date);if(candidate.getFullYear()!==+y||candidate.getMonth()!==+m-1||candidate.getDate()!==+date){warnings.push('Invalid calendar date; choose a valid date.');return;}d.setFullYear(+y,+m-1,+date);day=true;});
+ const months=['january','february','march','april','may','june','july','august','september','october','november','december'];
+ take(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2})(?:st|nd|rd|th)?(?:,?\s+(20\d{2}))?\b/ig,(_,m,date,y)=>{const month=months.indexOf(m.toLowerCase());let year=y?+y:new Date(now).getFullYear();if(!y&&new Date(year,month,+date,23,59)<now)year++;const c=new Date(year,month,+date);if(c.getMonth()!==month||+date<1){warnings.push('Invalid calendar date.');return;}d.setFullYear(year,month,+date);day=true;});
+ take(/\b(?:(?:at|by)\s+)?(\d{1,2})(?::([0-5]\d))?\s*(a\.?m\.?|p\.?m\.?)\b/ig,(_,h,m,ampm)=>{h=+h;if(h<1||h>12){warnings.push('Invalid hour.');return;}d.setHours(h%12+(ampm.toLowerCase().startsWith('p')?12:0),+(m||0),0,0);time=true;});
+ take(/\b(?:at|by)\s+([01]?\d|2[0-3]):([0-5]\d)\b/ig,(_,h,m)=>{d.setHours(+h,+m,0,0);time=true;});
+ take(/\b(?:at\s+|in the\s+)?(noon|midnight|morning|afternoon|evening)\b/ig,(_,w)=>{d.setHours({noon:12,midnight:0,morning:9,afternoon:15,evening:18}[w.toLowerCase()],0,0,0);time=true;});
+ if(day||time||out.repeat){if(!time)d.setHours(9,0,0,0);if(!day&&d<=now)d.setDate(d.getDate()+1);out.due=d.getTime();out.dateEnabled=true;out.timeEnabled=time;}
+ if(out.urgent&&!out.timeEnabled)warnings.push('Urgent alarms need a date and time. Choose them in the draft.');
+ if(/\b(?:next|repeat|before|after|at \d|on \d)\b/i.test(text))warnings.push('Some timing words were not recognized; review the title and schedule.');
+ text=text.replace(/^\s*(?:please\s+)?(?:(?:remind me|reminder)(?:\s+to)?|add (?:a )?reminder(?: to)?)\s*/i,'').replace(/\b(?:and make it|and mark it|make it|mark it|due|please)\s*$/ig,'').replace(/\s+/g,' ').replace(/(?:[\s,;:]+|\band\b|\bplease\b)+$/ig,'').replace(/^[\s,;:]+/g,'').trim();
+ out.title=text||original;delete out.noFlag;delete out.noUrgent;return {draft:out,warnings,original};
+}
+const api={parseReminder,compare,uid,empty,validate,merge,touch,nextDue,complete,rollover,removeList,visible,reorder,moveInto,trash,recent,purge,restore,moveSection,RETENTION};if(typeof module!=='undefined')module.exports=api;root.QN=api;
 })(typeof window==='undefined'?globalThis:window);

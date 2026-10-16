@@ -1,3 +1,17 @@
+# QuickNotes 1.7.0
+
+[Download APK, source and spec](https://github.com/requiredtruth/quicknotes-ios-style/releases/latest)
+
+Completed and Urgent smart lists gather reminders across all lists. The bottom Add Reminder button stays above scrolling rows. Widget settings now separate built-in and personal lists, display their icons/colors, and refresh the selected name and content.
+
+Choose **Groceries** when creating or editing a list to automatically group common English grocery items. Unknown items appear in Others; manual section moves are remembered until the item title changes.
+
+To transfer reminders, open **Settings → Import copied text / CSV / JSON**. Paste one title per line (use `[x]` for completed), or choose a UTF-8 text/CSV/JSON file. Review the preview and tap Import. CSV/JSON can preserve notes, ISO dates, completion, flags, urgent state, list names and section names. This is a local transfer; iCloud sync, recurrence, attachments and sharing permissions are not imported.
+
+See [spec.md](spec.md) for details and validation.
+
+---
+
 # QuickNotes 1.6.0
 
 [Download APK, source and spec](https://github.com/requiredtruth/quicknotes-ios-style/releases/latest)

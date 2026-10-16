@@ -1,13 +1,11 @@
-# QuickNotes 1.6.0
+# QuickNotes 1.7.0
 
-- Widget-wide “Complete reminders in this widget” setting. Enable or disable check circles for the whole widget; reminders no longer need individual permission. Replayed taps cannot uncomplete or duplicate reminders.
-- Reworked flagged urgent alarm display: audible high-priority alarm channel, Android 15 activity PendingIntent opt-in, lock-screen activity flags, and direct alarm-screen display while QuickNotes is visible. Removed the duplicate alert that competed with the alarm notification. Alarm setup now includes full-screen access.
-- Add List uses a square-plus icon. Add Reminder is centered at the bottom.
-- A themed hour/minute/AM–PM picker contains the interval buttons. Each tap adds to the selected time, including across midnight.
-- Time intervals appear only when Time is on. All Early Reminder controls appear only when Date is on.
-- Custom Repeat immediately opens its rule controls in both reminder editors; no save-and-reopen workaround.
-- Completed reminders and their descendants cannot be selected as new subtask parents.
+- New Completed and Urgent smart lists across all active lists, also available in widgets.
+- Add Reminder stays above scrolling reminder rows with extra bottom clearance.
+- Widget list changes rebuild the list binding and refresh the header. The picker separates built-in and personal lists with divider headings and shows list icons and matching color boxes.
+- New Groceries list type automatically creates sections for common English grocery items. Unknown items stay in Others. Manual moves are remembered until the item is renamed.
+- Local migration screen for copied titles or UTF-8 text/CSV/JSON files, with preview before import, duplicate detection, and preservation of supported notes, ISO dates, completion, flags, urgent state, lists and sections. No iCloud connection is needed. Recurrence, photos and sharing permissions are not transferred.
 
-Full-screen alarm tests verify an actual resumed alarm activity with the emulator locked and with QuickNotes in the foreground, plus snooze. Android uses an expanded alert while another app is actively in use; lock-screen full-screen display requires full-screen notification access and an enabled high-priority alarm channel.
+Validation: 23 model tests, Playwright UI regression tests, and Android 15 instrumentation before publication. Signed with the existing upgrade-compatible release key; versionCode 8.
 
-Assets: signed upgrade-compatible APK, source ZIP, spec.md and SHA256SUMS.
+Assets: signed APK, source ZIP, spec.md and SHA256SUMS.

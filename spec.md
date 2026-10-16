@@ -1,3 +1,31 @@
+# QuickNotes 1.7.0
+
+## New views and widget selection
+
+Completed shows every nondeleted completed reminder in active lists, regardless of the normal Show Completed preference. Urgent shows urgent reminders across active lists and supports the existing completed toggle. Both cards have counts and participate in smart-list editing/reordering. Existing installations gain the two cards automatically. Both are widget choices; Completed widget rows have no completion circle.
+
+The bottom toolbar has an explicit stacking level above reminder rows and the list has extra bottom space. Dialogs retain their native modal behavior.
+
+Widget configuration uses disabled Built-in Lists and My Lists headings with a divider, icons, and tinted bordered boxes from each list color. The selected row uses a fresh view so labels do not carry over. Saved selection is committed before refresh; the remote adapter URI includes the selected list, theme and completion preference so Android rebinds after a change. Header metadata is resolved from current storage on every refresh.
+
+## Groceries
+
+Create/edit a list and choose Standard or Groceries. On save, startup and sync merge, grocery lists classify common English item names on-device into Produce, Bakery, Meat & Seafood, Dairy & Eggs, Pantry & Grains, Canned & Jarred, Frozen, Snacks & Sweets, Drinks, Baking & Spices, Household, Personal Care or Pet Supplies. Longer matching names take precedence, such as milk chocolate, apple juice and dog food. Unrecognized items remain in Others. Classification is a local dictionary, not a cloud model or complete multilingual product catalog.
+
+Only needed category sections are generated and empty generated sections are hidden. Section IDs are deterministic per list/category to avoid duplicates after sync. Subtasks follow their parent section. Dragging to another section or Others records a manual override; renaming the item resumes classification. Converting an existing list retains custom section placement. Returning to Standard retains reminders and sections without future automatic sorting.
+
+## Transfer from iPhone or another app
+
+Settings → Import copied text / CSV / JSON accepts pasted text or Android's file picker. Files are UTF-8 and limited to 1 MiB / 5,000 reminders. Text is one reminder per line; Markdown or Unicode checkboxes preserve completion. CSV (including tab separated data) has a header and supports quoted commas/newlines/quotes. JSON is an array of reminder objects or an object containing a reminders array. Supported fields include title, notes, due (ISO date/time or Unix timestamp), completed/done, flagged/flag, urgent, list/listName and section/sectionName. Date-only reminders use 09:00 local without Time enabled. Invalid input is rejected before saving.
+
+A review screen shows counts and the first 30 titles; storage changes only after Import. Source list names can create/match destination lists, or a chosen destination overrides names. A default Imported Reminders list is reused. Stable record fingerprints skip the same imported records in the same destination while preserving intentional repeated lines in one file. Existing content is merged, never cleared. Imported source sections are preserved. Recurrence, photos, nested relationships and sharing permissions are not transferred. This feature does not connect to iCloud or read Apple credentials; users supply copied text or a compatible export from their source workflow.
+
+## Validation and release
+
+23 model tests cover smart filtering, phrase classification, unknowns, manual overrides, subtasks, deterministic section identity, conversion, CSV/JSON/text parsing, dates, preview immutability and repeat-import protection alongside existing regression coverage. Playwright covers the new cards, grocery creation/sections, floating button hit testing over long lists and import review/commit/error paths. Android 15 instrumentation covers native widget filters, picker headings/labels/colors, adapter identity and actual RemoteViews header updates alongside the existing alarm/completion tests. CI gates publication on all suites and verifies the signed APK against source. Version 1.7.0 / versionCode 8 uses the existing signing certificate. APK, source ZIP, spec and checksums accompany the release.
+
+---
+
 # QuickNotes 1.6.0
 
 ## Current widget and scheduling behavior

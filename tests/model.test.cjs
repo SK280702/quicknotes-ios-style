@@ -38,3 +38,26 @@ test('custom early intervals preserve units and reopen legacy minute totals safe
 });
 
 test('completed reminders cannot become new subtask parents',()=>{const d=QN.empty();d.items=[{id:'child',list:'default',updated:1},{id:'done',list:'default',done:true,updated:1}];assert.equal(QN.moveInto(d,'child','done'),false);assert.equal(d.items[0].parent,undefined);});
+
+test('Completed and Urgent aggregate live lists and respect completion filters',()=>{
+ const d=QN.empty();d.lists.push({id:'two',title:'Two',updated:1},{id:'gone',deleted:true,updated:1});d.items=[{id:'a',list:'default',title:'Done',done:true,urgent:true},{id:'b',list:'two',title:'Urgent',urgent:true},{id:'c',list:'two',title:'Done too',done:true},{id:'d',list:'gone',done:true,urgent:true},{id:'e',list:'default',done:true,deleted:true}];
+ assert.deepEqual(QN.visible(d,'completed').map(i=>i.id),['a','c']);assert.deepEqual(QN.visible(d,'urgent').map(i=>i.id),['b']);assert.deepEqual(QN.visible(d,'urgent','',true).map(i=>i.id),['a','b']);assert.equal(QN.visible(d,'completed','too').length,1);
+});
+test('groceries classify phrases, keep unknowns in Others, and preserve manual moves until renamed',()=>{
+ for(const [title,key] of [['2 green beans','produce'],['milk chocolate','snacks'],['apple juice','drinks'],['bread flour','baking'],['frozen peas','frozen'],['dog food','pets'],['tea towels','household'],['Call accountant','']])assert.equal(QN.groceryCategory(title),key,title);
+ const d=QN.empty();d.lists[0].type='grocery';d.items=[{id:'milk',list:'default',title:'Milk',updated:1},{id:'child',parent:'milk',list:'default',title:'Unknown',updated:1},{id:'other',list:'default',title:'Birthday card',updated:1}];assert.equal(QN.organizeGroceries(d,10),true);assert.equal(d.sections.length,1);assert.equal(d.items[0].section,d.items[1].section);assert.equal(d.items[2].section||'','');assert.equal(QN.organizeGroceries(d,11),false);
+ const section=d.items[0].section;QN.moveSection(d,'milk','',12);QN.organizeGroceries(d,13);assert.equal(d.items[0].section,'');assert.equal(d.items[1].section,'');d.items[0].title='Eggs';QN.organizeGroceries(d,14);assert.equal(d.items[0].section,section);assert.equal(d.items[1].section,section);
+ const merged=QN.merge(d,clone(d));assert.equal(QN.organizeGroceries(merged,15),false);assert.equal(merged.sections.length,1);d.lists[0].type='standard';const before=clone(d);assert.equal(QN.organizeGroceries(d,16),false);assert.deepEqual(d,before);
+ assert.notEqual(QN.grocerySectionId('😀','produce'),QN.grocerySectionId('😁','produce'));
+});
+test('converting a list to groceries preserves custom section placement',()=>{const d=QN.empty();d.lists[0].type='grocery';d.sections=[{id:'custom',list:'default',title:'For party',updated:1}];d.items=[{id:'a',list:'default',section:'custom',title:'Milk',updated:1}];QN.organizeGroceries(d,2);assert.equal(d.items[0].section,'custom');assert.equal(d.items[0].groceryManual,true);});
+test('migration previews without mutation and preserves CSV dates, notes, flags, completion and sections',()=>{
+ const d=QN.empty(),before=clone(d),p=QN.parseMigration('title,notes,due,completed,flagged,urgent,list,section\n"Milk, eggs","Line 1\nLine ""2""",2026-10-20T15:30:00Z,true,true,false,Shopping,Dairy');assert.equal(p.format,'CSV');const result=QN.applyMigration(d,p.records,'',true,100);assert.deepEqual(d,before);assert.equal(result.added,1);assert.equal(result.listsCreated,1);assert.equal(result.sectionsCreated,1);const i=result.data.items[0];assert.equal(i.title,'Milk, eggs');assert.equal(i.notes,'Line 1\nLine "2"');assert.equal(i.due,Date.parse('2026-10-20T15:30:00Z'));assert.equal(i.done,true);assert.equal(i.flag,true);assert.equal(i.urgent,false);assert.ok(i.section);
+ const again=QN.applyMigration(result.data,p.records,'',true,101);assert.equal(again.added,0);assert.equal(again.duplicates,1);assert.deepEqual(again.data,result.data);
+});
+test('copied checkbox text and JSON import safely, with repeat imports deduplicated',()=>{
+ const p=QN.parseMigration('[x] Finished\n☐ Milk\n- [ ] Bread\n✅ Called');assert.deepEqual(p.records.map(i=>[i.title,i.done]),[['Finished',true],['Milk',false],['Bread',false],['Called',true]]);const first=QN.applyMigration(QN.empty(),p.records,'',false,1),again=QN.applyMigration(first.data,p.records,'',false,2);assert.equal(again.added,0);assert.equal(again.duplicates,4);assert.equal(again.listsCreated,0);
+ const json=QN.parseMigration(JSON.stringify({reminders:[{title:'😀',due:'2026-10-20'},{title:'😁',due:1792512000}]}));assert.equal(json.records[0].timeEnabled,false);assert.notEqual(json.records[0].importKey,json.records[1].importKey);assert.equal(json.records[1].due,1792512000000);
+ for(const bad of ['title,due\nTask,2026-02-30','title,due\nTask,tomorrow','title,notes\n"broken','[]','[{"title":""}]'])assert.throws(()=>QN.parseMigration(bad));
+ const twins=QN.parseMigration('Milk\nMilk');assert.notEqual(twins.records[0].importKey,twins.records[1].importKey);
+});

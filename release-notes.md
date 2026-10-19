@@ -1,7 +1,7 @@
-# QuickNotes 1.8.1
+# QuickNotes 1.8.2
 
-- Corrected native-library ZIP alignment in the production APK, fixing Android installation rejection, including Pixel 7.
-- Preserves the existing application ID and release signing certificate; install over the previous version to retain reminders and settings.
-- Build and release checks now inspect every native library's final ZIP offset and verify the final signed APK with zipalign before publication.
-- Android CI also installs the actual production APK without incremental installation and tests upgrading from the previous signed 1.7.0 release.
-- Includes all 1.8.0 reminder, widget, section color and grocery improvements.
+- Urgent reminders stay hidden from notifications and alarm screens until their exact due time, even when flagged or configured with an early reminder.
+- Changing a live flagged reminder to urgent immediately removes its pre-due notification. Stale early broadcasts and premature service starts cannot display it.
+- Non-urgent flagged reminders keep their live status-bar countdowns. Urgent reminders still ring at the scheduled due time.
+- Includes section collapse/counts and text colors; custom list/app/widget backgrounds with automatic black/white text; voice-first ML Kit parsing; and the supplied 2,604-entry local grocery classification model. Reminder import and Google account linking are removed.
+- Preserves application ID, signing certificate, and the Pixel 7 native-library alignment fix. Install over the existing app to retain data.

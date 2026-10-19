@@ -156,3 +156,7 @@ Google account linking, background account synchronization, and copied-text/CSV/
 
 ## Version 1.8.1 — production installation repair
 The production APK retains com.quicknotes.app and the original release signing certificate, with versionCode 10. Native libraries must remain ZIP_STORED and begin at offsets divisible by 16384. Alignment occurs after any ZIP modifications and before apksigner; the final signed bytes are checked again. CI installs the actual production APK using non-incremental Package Installer and tests an in-place upgrade from signed v1.7.0. This catches packaging errors that installation of the temporary-key test build alone cannot detect.
+
+
+## 1.8.2: urgent notification visibility
+Urgent reminders never show a notification or alarm screen before their due timestamp, whether flagged or unflagged. Early-notification alarms are only scheduled for non-urgent reminders. A shared guard in notification publication also cancels an existing pre-due notification, and reconciliation removes a live notification after the item becomes urgent. Due alarm delivery checks the actual timestamp without the previous two-second allowance and reschedules premature broadcasts. AlarmService independently rejects pre-due and snoozed starts. Non-urgent flagged countdown notifications remain unchanged. The supplied expanded grocery dictionary is byte-for-byte identical to data/expanded_grocery_dictionary.json.

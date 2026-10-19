@@ -1,4 +1,4 @@
-# QuickNotes 1.8.1
+# QuickNotes 1.8.2
 
 Offline Android reminders with lists, sections, widgets, alarms, attachments and document sync.
 
@@ -8,4 +8,4 @@ See [spec.md](spec.md) for complete behavior and [release-notes.md](release-note
 
 The signed production APK is prepared with the original signing key held outside the repository. CI builds a temporary-key APK for native tests, and publishes only after the matching production-signed APK is committed.
 
-The production APK is stored compressed as `release/QuickNotes-v1.8.1.apk.gz`; release automation expands it and verifies its signature and embedded source before publishing the installable `.apk`.
+The production APK is stored compressed as `release/QuickNotes-v1.8.2.apk.gz`; release automation expands it and verifies its signature and embedded source before publishing the installable `.apk`.

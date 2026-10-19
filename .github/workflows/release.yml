@@ -36,6 +36,9 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
       - uses: android-actions/setup-android@v3
         with:
           packages: platform-tools
@@ -46,6 +49,15 @@ jobs:
         run: |
           ./build.sh
           ./tests/android/build.sh
+      - name: Prepare signing handoff
+        run: |
+          cp "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" build/apksigner.jar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: signing-handoff
+          path: |
+            build/aligned.apk
+            build/apksigner.jar
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -60,7 +72,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           script: |
-            adb install dist/QuickNotes-v1.7.0.apk
+            adb install dist/QuickNotes-v1.8.0.apk
             adb install build/native-tests.apk
             adb shell pm grant com.quicknotes.app android.permission.POST_NOTIFICATIONS
             adb shell appops set com.quicknotes.app SCHEDULE_EXACT_ALARM allow
@@ -77,6 +89,7 @@ jobs:
           path: build/native-*.txt
   release:
     needs: [native, ui]
+    if: contains(github.event.head_commit.message, '[release-signed]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -87,6 +100,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
       - uses: android-actions/setup-android@v3
         with:
           packages: platform-tools
@@ -96,25 +112,25 @@ jobs:
       - name: Compile source and verify APK
         run: |
           ./build.sh
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose release/QuickNotes-v1.7.0.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose release/QuickNotes-v1.8.0.apk
           python3 tests/check_release.py
       - name: Prepare assets
         run: |
-          cp release/QuickNotes-v1.7.0.apk dist/QuickNotes-v1.7.0.apk
-          git archive --format=zip --prefix=QuickNotes/ HEAD -o dist/QuickNotes-source-v1.7.0.zip
+          cp release/QuickNotes-v1.8.0.apk dist/QuickNotes-v1.8.0.apk
+          git archive --format=zip --prefix=QuickNotes/ HEAD -o dist/QuickNotes-source-v1.8.0.zip
           cp spec.md dist/spec.md
           cd dist
-          sha256sum QuickNotes-v1.7.0.apk QuickNotes-source-v1.7.0.zip spec.md > SHA256SUMS
+          sha256sum QuickNotes-v1.8.0.apk QuickNotes-source-v1.8.0.zip spec.md > SHA256SUMS
       - name: Publish release from main
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if ! gh release view v1.7.0 >/dev/null 2>&1; then
-            gh release create v1.7.0 --target "$GITHUB_SHA" --title 'QuickNotes 1.7.0' --notes-file release-notes.md
+          if ! gh release view v1.8.0 >/dev/null 2>&1; then
+            gh release create v1.8.0 --target "$GITHUB_SHA" --title 'QuickNotes 1.8.0' --notes-file release-notes.md
           else
-            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/v1.7.0" -f sha="$GITHUB_SHA" -F force=true
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/v1.8.0" -f sha="$GITHUB_SHA" -F force=true
           fi
-          gh release upload v1.7.0 dist/QuickNotes-v1.7.0.apk dist/QuickNotes-source-v1.7.0.zip dist/spec.md dist/SHA256SUMS --clobber
+          gh release upload v1.8.0 dist/QuickNotes-v1.8.0.apk dist/QuickNotes-source-v1.8.0.zip dist/spec.md dist/SHA256SUMS --clobber
       - uses: actions/upload-artifact@v4
         if: always()
         with:

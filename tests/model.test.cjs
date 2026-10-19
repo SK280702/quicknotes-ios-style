@@ -61,3 +61,13 @@ test('copied checkbox text and JSON import safely, with repeat imports deduplica
  for(const bad of ['title,due\nTask,2026-02-30','title,due\nTask,tomorrow','title,notes\n"broken','[]','[{"title":""}]'])assert.throws(()=>QN.parseMigration(bad));
  const twins=QN.parseMigration('Milk\nMilk');assert.notEqual(twins.records[0].importKey,twins.records[1].importKey);
 });
+
+test('local dictionary model covers expanded categories and abstains without a whole keyword',()=>{
+ const model=require('../app/src/main/assets/grocery-model.js');assert.equal(model.algorithm,'multinomial-naive-bayes');assert.equal(model.categories.length,18);assert.equal(model.examples,2604);
+ for(const [text,key] of [['Aquaphor baby','baby'],['Claritin-D','health'],['hummus','deli'],['cabernet sauvignon','alcohol'],['dog shampoo','pets'],['bruschetta','deli'],['2 cans of coconut milk','dairy'],['shampoo','personal'],['Call the accountant',''],['pineapple-shaped lamp','produce'],['milkyway123','']])assert.equal(QN.groceryCategory(text),key,text);
+});
+test('ML Kit adapter preserves sentence keywords and only applies completed trailing commands',()=>{
+ let p=QN.parseEntityReminder('Remind me to visit urgent care and buy a flag',[],[]);assert.equal(p.draft.title,'visit urgent care and buy a flag');assert.equal(p.draft.urgent,false);assert.equal(p.draft.flag,false);
+ const text='Remind me to call urgent care tomorrow at 5 pm in my Work list, flagged and urgent',start=text.indexOf('tomorrow'),end=text.indexOf(' in my');p=QN.parseEntityReminder(text,[{start,end,timestamp:new Date(2099,0,2,17).getTime(),granularity:5}],[{id:'work',title:'Work'}]);assert.equal(p.draft.title,'call urgent care');assert.equal(p.draft.flag,true);assert.equal(p.draft.urgent,true);assert.equal(p.draft.list,'work');assert.equal(new Date(p.draft.due).getHours(),17);
+ p=QN.parseEntityReminder('Ask about tomorrow delivery', [{start:10,end:18,timestamp:1000000,granularity:3}]);assert.equal(p.draft.title,'Ask about tomorrow delivery');assert.equal(p.draft.due,0);
+});

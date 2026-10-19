@@ -11,3 +11,4 @@ java com.sun.tools.javac.Main -source 8 -target 8 -bootclasspath "$JAR:$BT/core-
 (cd build/testdex && zip -q -u ../native-tests-unsigned.apk classes.dex)
 "$BT/zipalign" -f -p 4 build/native-tests-unsigned.apk build/native-tests-aligned.apk
 "$BT/apksigner" sign --ks "${QN_KEYSTORE:-build/developer.jks}" --ks-pass "pass:${QN_KEYSTORE_PASSWORD:-android}" --out build/native-tests.apk build/native-tests-aligned.apk
+

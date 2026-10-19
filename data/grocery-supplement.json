@@ -1,0 +1,146 @@
+{
+  "produce": [
+    "green beans"
+  ],
+  "bakery": [
+    "english muffin"
+  ],
+  "meat": [
+    "ground beef",
+    "ground turkey",
+    "deli meat"
+  ],
+  "dairy": [
+    "oat milk",
+    "almond milk",
+    "soy milk",
+    "coconut milk",
+    "sour cream",
+    "cottage cheese",
+    "half and half"
+  ],
+  "pantry": [
+    "chick peas",
+    "olive oil",
+    "vegetable oil",
+    "soy sauce",
+    "tomato sauce",
+    "pasta sauce",
+    "hot sauce",
+    "maple syrup",
+    "peanut butter",
+    "almond butter",
+    "chicken broth",
+    "beef broth",
+    "vegetable broth",
+    "coconut oil",
+    "rice vinegar"
+  ],
+  "canned": [
+    "canned tomatoes",
+    "canned tuna",
+    "canned beans",
+    "canned corn",
+    "canned soup",
+    "canned peas",
+    "canned chicken",
+    "canned salmon",
+    "canned fruit",
+    "tinned beans",
+    "tinned tomatoes",
+    "baked beans",
+    "jarred salsa",
+    "apple sauce"
+  ],
+  "frozen": [
+    "ice cream",
+    "ice cubes",
+    "frozen pizza",
+    "frozen vegetables",
+    "frozen peas",
+    "frozen fruit",
+    "frozen chips",
+    "frozen fries",
+    "frozen berries"
+  ],
+  "snacks": [
+    "milk chocolate",
+    "dark chocolate",
+    "chocolate bar",
+    "rice cakes",
+    "trail mix",
+    "granola bar",
+    "protein bar",
+    "dried fruit"
+  ],
+  "drinks": [
+    "sparkling water",
+    "mineral water",
+    "apple juice",
+    "orange juice",
+    "cranberry juice",
+    "energy drink",
+    "sports drink",
+    "cocoa drink",
+    "coconut water",
+    "iced tea",
+    "coffee beans"
+  ],
+  "baking": [
+    "bread flour",
+    "brown sugar",
+    "powdered sugar",
+    "icing sugar",
+    "baking soda",
+    "baking powder",
+    "vanilla extract",
+    "black pepper",
+    "corn starch",
+    "cocoa powder",
+    "chocolate chips"
+  ],
+  "household": [
+    "tea towels",
+    "laundry detergent",
+    "dish soap",
+    "dishwashing liquid",
+    "dishwasher tablets",
+    "cleaning spray",
+    "window cleaner",
+    "paper towels",
+    "toilet paper",
+    "bin bags",
+    "trash bags",
+    "garbage bags",
+    "aluminum foil",
+    "aluminium foil",
+    "cling film",
+    "plastic wrap",
+    "light bulbs",
+    "washing powder",
+    "fabric softener",
+    "kitchen roll"
+  ],
+  "personal": [
+    "body wash",
+    "hand soap",
+    "shaving cream",
+    "dental floss",
+    "cotton pads",
+    "sanitary pads",
+    "baby wipes"
+  ],
+  "pets": [
+    "dog food",
+    "cat food",
+    "pet food",
+    "bird food",
+    "fish food",
+    "cat litter",
+    "dog treats",
+    "cat treats",
+    "pet treats",
+    "puppy food",
+    "kitten food"
+  ]
+}

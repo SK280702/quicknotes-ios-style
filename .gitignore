@@ -4,3 +4,9 @@ dist/
 *.jks
 *.keystore
 node_modules/
+
+.gradle/
+app/build/
+local.properties
+
+.tools/

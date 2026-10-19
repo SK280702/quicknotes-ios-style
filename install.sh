@@ -12,3 +12,10 @@ if [ ! -x "$SDK/cmdline-tools/latest/bin/sdkmanager" ]; then
  rm "$ARCHIVE"
 fi
 "$SDK/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK" 'platforms;android-35' 'build-tools;35.0.0'
+
+if ! command -v gradle >/dev/null; then
+ mkdir -p .tools
+ curl --fail --location --retry 2 https://services.gradle.org/distributions/gradle-8.9-bin.zip -o .tools/gradle.zip
+ unzip -qo .tools/gradle.zip -d .tools
+ rm .tools/gradle.zip
+fi

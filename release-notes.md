@@ -1,11 +1,11 @@
-# QuickNotes 1.7.0
+QuickNotes 1.8.0
 
-- New Completed and Urgent smart lists across all active lists, also available in widgets.
-- Add Reminder stays above scrolling reminder rows with extra bottom clearance.
-- Widget list changes rebuild the list binding and refresh the header. The picker separates built-in and personal lists with divider headings and shows list icons and matching color boxes.
-- New Groceries list type automatically creates sections for common English grocery items. Unknown items stay in Others. Manual moves are remembered until the item is renamed.
-- Local migration screen for copied titles or UTF-8 text/CSV/JSON files, with preview before import, duplicate detection, and preservation of supported notes, ISO dates, completion, flags, urgent state, lists and sections. No iCloud connection is needed. Recurrence, photos and sharing permissions are not transferred.
+- Exact ordinary reminder delivery when permission is enabled, missed-alert recovery, and rescheduling after updates/reboots.
+- Flagged non-urgent reminders appear immediately as ongoing timer-style status notifications.
+- Collapsible sections with counts, section text colors, and drag out using the exposed list header/search space.
+- Custom list/app/widget backgrounds with automatic black or white text; widgets can follow list backgrounds.
+- Voice-first capture with local ML Kit date/time extraction and complete-transcript review. First use requires a model download.
+- Offline grocery text classifier using the supplied 2,604-entry dictionary across 18 categories; unknowns stay in Others.
+- Removed Google account linking and reminder import. Local data, ZIP backups and document sync are retained.
 
-Validation: 23 model tests, Playwright UI regression tests, and Android 15 instrumentation before publication. Signed with the existing upgrade-compatible release key; versionCode 8.
-
-Assets: signed APK, source ZIP, spec.md and SHA256SUMS.
+Enable notifications and Precise Reminder & Alarm Access in Settings for timely delivery.

@@ -1,11 +1,7 @@
-QuickNotes 1.8.0
+# QuickNotes 1.8.1
 
-- Exact ordinary reminder delivery when permission is enabled, missed-alert recovery, and rescheduling after updates/reboots.
-- Flagged non-urgent reminders appear immediately as ongoing timer-style status notifications.
-- Collapsible sections with counts, section text colors, and drag out using the exposed list header/search space.
-- Custom list/app/widget backgrounds with automatic black or white text; widgets can follow list backgrounds.
-- Voice-first capture with local ML Kit date/time extraction and complete-transcript review. First use requires a model download.
-- Offline grocery text classifier using the supplied 2,604-entry dictionary across 18 categories; unknowns stay in Others.
-- Removed Google account linking and reminder import. Local data, ZIP backups and document sync are retained.
-
-Enable notifications and Precise Reminder & Alarm Access in Settings for timely delivery.
+- Corrected native-library ZIP alignment in the production APK, fixing Android installation rejection, including Pixel 7.
+- Preserves the existing application ID and release signing certificate; install over the previous version to retain reminders and settings.
+- Build and release checks now inspect every native library's final ZIP offset and verify the final signed APK with zipalign before publication.
+- Android CI also installs the actual production APK without incremental installation and tests upgrading from the previous signed 1.7.0 release.
+- Includes all 1.8.0 reminder, widget, section color and grocery improvements.

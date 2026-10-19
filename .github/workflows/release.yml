@@ -80,8 +80,8 @@ jobs:
           profile: pixel_6
           disable-animations: true
           script: |
-            adb install dist/QuickNotes-v1.8.1.apk
-            adb install build/native-tests.apk
+            adb install --no-incremental dist/QuickNotes-v1.8.1.apk
+            adb install --no-incremental build/native-tests.apk
             adb shell pm grant com.quicknotes.app android.permission.POST_NOTIFICATIONS
             adb shell appops set com.quicknotes.app SCHEDULE_EXACT_ALARM allow
             adb shell appops set com.quicknotes.app USE_FULL_SCREEN_INTENT allow
@@ -90,7 +90,7 @@ jobs:
             adb logcat -d > build/native-logcat.txt
             adb shell dumpsys alarm > build/native-alarms.txt
             python3 -c "from pathlib import Path; assert 'Native alarm and confirmation tests passed' in Path('build/native-tests.txt').read_text()"
-            if [ -f build/production.apk ]; then adb uninstall com.quicknotes.app.tests; adb uninstall com.quicknotes.app; adb install --no-incremental build/previous-release.apk; adb shell monkey -p com.quicknotes.app -c android.intent.category.LAUNCHER 1; adb install --no-incremental -r build/production.apk; adb shell monkey -p com.quicknotes.app -c android.intent.category.LAUNCHER 1; adb shell pidof com.quicknotes.app; fi
+            set -e; if [ -f build/production.apk ]; then adb uninstall com.quicknotes.app.tests; adb uninstall com.quicknotes.app; adb install --no-incremental build/previous-release.apk; adb shell monkey -p com.quicknotes.app -c android.intent.category.LAUNCHER 1; adb install --no-incremental -r build/production.apk; adb shell monkey -p com.quicknotes.app -c android.intent.category.LAUNCHER 1; adb shell pidof com.quicknotes.app; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:

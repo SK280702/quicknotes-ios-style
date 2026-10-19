@@ -112,8 +112,10 @@ jobs:
       - name: Compile source and verify APK
         run: |
           ./build.sh
+          gzip -dk release/QuickNotes-v1.8.0.apk.gz
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose release/QuickNotes-v1.8.0.apk
           python3 tests/check_release.py
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --print-certs release/QuickNotes-v1.8.0.apk | grep -q '4b76d05ec8ac6f20fd86b4e79b25e65f8b3be1dae1d02f5731c98d6c767fa843'
       - name: Prepare assets
         run: |
           cp release/QuickNotes-v1.8.0.apk dist/QuickNotes-v1.8.0.apk

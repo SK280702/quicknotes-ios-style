@@ -71,8 +71,16 @@ public class NativeTests extends Instrumentation {
   shell("input keyevent 224");shell("wm dismiss-keyguard");
   // Foreground QuickNotes must also open the alarm screen directly.
   JSONObject foregroundData=data(System.currentTimeMillis()+8000);foregroundData.getJSONArray("items").getJSONObject(0).put("flag",true);store(foregroundData);activity=(MainActivity)startActivitySync(new Intent(context,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();awaitRing(true,25000);awaitScreen("native-alarm-test",10000);runOnMainSync(()->AlarmActivity.visible.send("SNOOZE"));awaitRing(false,5000);check(context.getSharedPreferences(Reminders.PREFS,0).getLong("snooze:native-alarm-test",0)>System.currentTimeMillis()+250000,"Alarm screen did not snooze");runOnMainSync(()->activity.finish());waitForIdleSync();activity.io.awaitTermination(5,TimeUnit.SECONDS);foregroundData.getJSONArray("items").getJSONObject(0).put("done",true);store(foregroundData);
-  // v1.8: non-urgent flagged reminders appear before due and use the system chronometer.
-  JSONObject liveData=data(System.currentTimeMillis()+3600000);JSONObject liveItem=liveData.getJSONArray("items").getJSONObject(0);liveItem.put("urgent",false).put("flag",true);store(liveData);awaitNotification(nm,"native-alarm-test",true);boolean liveFound=false;for(android.service.notification.StatusBarNotification n:nm.getActiveNotifications())if("native-alarm-test".equals(n.getTag())){liveFound=true;check((n.getNotification().flags&Notification.FLAG_ONGOING_EVENT)!=0,"Future flagged reminder is not ongoing");check(n.getNotification().extras.getBoolean(Notification.EXTRA_SHOW_CHRONOMETER),"Live countdown missing");}check(liveFound,"No flagged status notification");
+  // Future flagged reminders stay hidden through save, direct delivery and early delivery.
+  JSONObject liveData=data(System.currentTimeMillis()+3600000);JSONObject liveItem=liveData.getJSONArray("items").getJSONObject(0);liveItem.put("urgent",false).put("flag",true);store(liveData);awaitNotification(nm,"native-alarm-test",false);
+  Reminders.notifyReminder(context,liveItem);Reminders.notifyReminder(context,liveItem,true);awaitNotification(nm,"native-alarm-test",false);
+  check(Reminders.waitingForNotificationDue(liveItem,System.currentTimeMillis()),"Future flagged guard failed");
+  check(!Reminders.waitingForNotificationDue(liveItem,liveItem.optLong("due")),"Due flagged reminder was blocked");
+  // Actual due-time broadcast still posts an ongoing notification without a countdown.
+  liveItem.put("due",System.currentTimeMillis()+6000);store(liveData);awaitNotification(nm,"native-alarm-test",false);awaitNotification(nm,"native-alarm-test",true,20000);
+  boolean liveFound=false;for(android.service.notification.StatusBarNotification n:nm.getActiveNotifications())if("native-alarm-test".equals(n.getTag())){liveFound=true;check((n.getNotification().flags&Notification.FLAG_ONGOING_EVENT)!=0,"Due flagged reminder is not ongoing");check(!n.getNotification().extras.getBoolean(Notification.EXTRA_CHRONOMETER_COUNT_DOWN),"Due flagged reminder counts down");}check(liveFound,"No flagged due notification");
+  // Moving a visible due reminder into the future removes the old notification.
+  liveItem.put("due",System.currentTimeMillis()+3600000);store(liveData);awaitNotification(nm,"native-alarm-test",false);
   // Changing a live reminder to urgent removes it immediately, even with early reminders.
   liveItem.put("urgent",true).put("earlyMinutes",1);store(liveData);awaitNotification(nm,"native-alarm-test",false);
   Reminders.notifyReminder(context,liveItem);Reminders.notifyReminder(context,liveItem,true);awaitNotification(nm,"native-alarm-test",false);
@@ -80,7 +88,8 @@ public class NativeTests extends Instrumentation {
   check(!Reminders.waitingForUrgentDue(liveItem,liveItem.optLong("due")),"Due urgent reminder was blocked");
   context.startService(AlarmService.command(context,"RING","native-alarm-test").putExtra("expectedDue",liveItem.optLong("due")));
   awaitRing(false,2000);awaitNotification(nm,"native-alarm-test",false);
-  liveItem.put("urgent",false);store(liveData);awaitNotification(nm,"native-alarm-test",true);
+  liveItem.put("urgent",false);store(liveData);awaitNotification(nm,"native-alarm-test",false);
+  liveItem.put("due",System.currentTimeMillis()-1000);store(liveData);awaitNotification(nm,"native-alarm-test",true);
   liveItem.put("flag",false);store(liveData);awaitNotification(nm,"native-alarm-test",false);
   // Deliver an ordinary exact reminder while the activity is stopped and screen is off.
   JSONObject regular=data(System.currentTimeMillis()+6000);regular.getJSONArray("items").getJSONObject(0).put("urgent",false);store(regular);shell("input keyevent 223");awaitNotification(nm,"native-alarm-test",true,20000);check(!ringing(),"Regular reminder started urgent audio");check(context.getSharedPreferences(Reminders.PREFS,0).getLong("delivered:native-alarm-test",0)==regular.getJSONArray("items").getJSONObject(0).optLong("due"),"Background delivery was not persisted");shell("input keyevent 224");shell("wm dismiss-keyguard");
